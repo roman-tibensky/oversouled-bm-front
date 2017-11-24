@@ -1,0 +1,15 @@
+applications:
+- buildpack: staticfile_buildpack
+  memory: 568M
+  instances: 1
+  domain: eu-gb.mybluemix.net
+  name: oversouled-front
+  host: oversouled-front
+  disk_quota: 768M
+
+env:
+    NODE_ENV: dev
+    NODE_TLS_REJECT_UNAUTHORIZED: 0
+    TEST: "hi there"
+    BACK_URL: https://oversouled-back.eu-gb.mybluemix.net/
+

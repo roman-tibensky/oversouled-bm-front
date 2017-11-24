@@ -1,0 +1,13 @@
+//
+   Created by aRTie on 29/10/2017.
+
+md-card(style="width:400px")
+  form([formGroup]="form",(ngSubmit)="onSubmit()")
+    md-input-container
+      input(mdInput placeholder="First name" style="width:350px" formControlName="firstName")
+    md-input-container
+      input(mdInput placeholder="Last name" style="width:350px" formControlName="lastName")
+
+    br
+    br
+    button(md-raised-button color="primary") Save Changes

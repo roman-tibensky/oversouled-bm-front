@@ -1,0 +1,2 @@
+<!--Created by aRTie on 29/10/2017.
+--><h2 align="center"><i>What... happened...?</i></h2><div *ngFor="let oneMessage of webSer.messages | async"><md-card class="oneStory"><md-card-title align="center" style="cursor:pointer;"><i>{{oneMessage.doc.timestamp | date: 'yyyy/MM/dd'}}</i></md-card-title><md-card-content align="center"><div *ngFor="let oneRow of oneMessage.doc.lore"><i>{{oneRow}}</i><br/></div></md-card-content></md-card></div>
