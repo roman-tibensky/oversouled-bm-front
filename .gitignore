@@ -40,3 +40,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+package-lock.json
+
+# pug ovverride
+/src/*.html
+!/src/index.html

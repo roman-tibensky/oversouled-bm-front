@@ -22,7 +22,11 @@ export class MoveResolutionService {
 			movedObject.y += yChange;
 			movedObject.x += xChange;
 
-			movedObject.curHp += movedObject.hpAdjust;
+			if (movedObject.wearingCreature) {
+                movedObject.wearingCreature.doc.curHp += movedObject.wearingCreature.doc.baseHpAdjust;
+            } else {
+                movedObject.curHp += movedObject.hpAdjust;
+            }
 			movedObject.moved = true;
 
 		} else {
@@ -45,7 +49,7 @@ export class MoveResolutionService {
 	moveObjects(tiles, tilesIndex, mapBase, mapLive, player, movedObjects){
 
 		for(const oneObj in movedObjects) {
-			const diff = Math.floor(movedObjects[oneObj].curMove + movedObjects[oneObj].doc.movement) - movedObjects[oneObj].curMove;
+			const diff = Math.floor(movedObjects[oneObj].doc.curMove + movedObjects[oneObj].doc.movement) - movedObjects[oneObj].doc.curMove;
 			for (let i = 0; i < diff; i++ ) {
 
 				let y = 0;
@@ -95,7 +99,7 @@ export class MoveResolutionService {
 					movedObjects[oneObj] = this.initMove(tiles, tilesIndex, mapBase, mapLive, movedObjects[oneObj], y, x, 'canBodyEnter');
 				}
 			}
-			movedObjects[oneObj].curMove += movedObjects[oneObj].doc.movement;
+			movedObjects[oneObj].doc.curMove += movedObjects[oneObj].doc.movement;
 
 		}
 
