@@ -131,8 +131,9 @@ export class LevelViewComponent implements OnInit  {
 
 
     initMove (yChange, xChange) {
+	    const enterType = this.player.wearingCreature ? 'canBodyEnter' : 'canEnter';
         this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
-            this.mapBase, this.mapLive, this.player, yChange, xChange, 'canEnter');
+            this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
 
         if (this.player.curHp <= 0) {
             this.gameOverDialog();
@@ -231,10 +232,8 @@ export class LevelViewComponent implements OnInit  {
         this.tiles.splice(creatureIndex, 1);
         this.tilesIndex.splice(creatureIndex, 1);
         this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
-        console.log(creature._id);
-        console.log(this.player);
+        this.tiles = this.moveSer.setCreatureFocus(this.tiles, this.player._id, false);
         console.log(this.tiles);
-        console.log(this.tilesIndex);
     }
 
     release() {
@@ -245,6 +244,7 @@ export class LevelViewComponent implements OnInit  {
             this.player.wearingCreature = false;
         }
 
+        this.tiles = this.moveSer.deleteCreatureFocus(this.tiles, this.player);
     }
 
 }
