@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { MoveResolutionService } from '../services/move-resolution.service';
+import { BattleResolutionService } from '../services/battle-resolution.service';
 import { MdDialog } from '@angular/material';
 import { GameOverDialogComponent } from '../dialogs/game-over.component';
 import * as _ from 'lodash';
@@ -36,6 +37,7 @@ export class LevelViewComponent implements OnInit  {
 		private webSer: WebService,
 		private dialog: MdDialog,
 		private moveSer: MoveResolutionService,
+        private batSer: BattleResolutionService
 	) {
 		this.isLoading = true;
 		this.tilesIndex = [];
@@ -132,9 +134,20 @@ export class LevelViewComponent implements OnInit  {
 
     initMove (yChange, xChange) {
 	    const enterType = this.player.wearingCreature ? 'canBodyEnter' : 'canEnter';
-        this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
-            this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
-
+	    if (
+	        this.player.wearingCreature
+            && this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp
+        ) {
+            this.batSer.initAttack(
+                this.tilesIndex.indexOf(this.player._id),
+                this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]),
+                this.player.wearingCreature.doc.attckType,
+                this.tiles
+            );
+        } else {
+            this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
+                this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
+        }
         if (this.player.curHp <= 0) {
             this.gameOverDialog();
         }
