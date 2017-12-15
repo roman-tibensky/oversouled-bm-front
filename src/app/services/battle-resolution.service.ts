@@ -12,18 +12,34 @@ import {isNullOrUndefined} from "util";
 @Injectable()
 export class BattleResolutionService {
     initAttack(attacker, target, attackType, tiles) {
-        let atckObj = tiles[attacker];
-        let trgtObj = tiles[target];
+        const atckObj = tiles[attacker];
+        const trgtObj = tiles[target];
+        let atckDmg;
         switch(attackType) {
             case 'phys':
-                trgtObj.doc.curHp = (atckObj.doc.baseStr - trgtObj.doc.baseDef <= 0)
-                    ? trgtObj.doc.curHp - atckObj.doc.baseStr - trgtObj.doc.baseDef
-                    : trgtObj.doc.curHp;
+                atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseStr : atckObj.doc.baseStr;
+                if (trgtObj.doc.wearingCreature){
+                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0)
+                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef
+                        : trgtObj.doc.wearingCreature.doc.curHp;
+                } else {
+                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseDef > 0)
+                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef
+                        : trgtObj.doc.curHp;
+                }
                 break;
             case 'mag':
-                trgtObj.doc.curHp = (atckObj.doc.baseStr - trgtObj.doc.baseRes <= 0)
-                    ? trgtObj.doc.curHp - atckObj.doc.baseStr - trgtObj.doc.baseRes
-                    : trgtObj.doc.curHp;
+                atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseMgc : atckObj.doc.baseMgc;
+                if (trgtObj.doc.wearingCreature){
+                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseRes > 0)
+                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes
+                        : trgtObj.doc.wearingCreature.doc.curHp;
+                } else {
+                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseRes > 0)
+                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes
+                        : trgtObj.doc.curHp;
+                }
+
                 break;
         }
 

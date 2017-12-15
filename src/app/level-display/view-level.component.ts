@@ -72,7 +72,7 @@ export class LevelViewComponent implements OnInit  {
 
 			this.tilesIndex = this.tiles.map(oneTile => oneTile.id);
 			this.tiles.push(this.player);
-			this.tilesIndex.push(this.player._id);
+			this.tilesIndex.push(this.player.doc._id);
 
 			for (const oneNpc in this.npcs) {
 				this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
@@ -90,7 +90,7 @@ export class LevelViewComponent implements OnInit  {
 
 			for (const yAxis in this.mapLive)  {
 				for (const xAxis in this.mapLive[yAxis]) {
-					console.log(this.actionField.activated === false || (((this.player.y - Number(yAxis) > this.player.possDistance) || (this.player.y - Number(yAxis) < -this.player.possDistance)) && ((this.player.x - Number(xAxis) > this.player.possDistance) && this.player.x - Number(xAxis) < -this.player.possDistance)));
+					console.log(this.actionField.activated === false || (((this.player.y - Number(yAxis) > this.player.doc.possDistance) || (this.player.y - Number(yAxis) < -this.player.doc.possDistance)) && ((this.player.x - Number(xAxis) > this.player.doc.possDistance) && this.player.x - Number(xAxis) < -this.player.doc.possDistance)));
 				}
 			}
 
@@ -106,8 +106,9 @@ export class LevelViewComponent implements OnInit  {
     checkAction (y, x) {
         console.log(y + '.' + x);
         this.actionField.activated = false;
-        this.currShowing = _.cloneDeep(this.tiles[this.tilesIndex.indexOf(this.mapLive[y][x])]);
-        switch (this.currShowing.doc.clickType) {
+        // this.currShowing = _.cloneDeep(this.tiles[this.tilesIndex.indexOf(this.mapLive[y][x])]);
+        this.currShowing = this.tilesIndex.indexOf(this.mapLive[y][x]);
+        switch (this.tiles[this.currShowing].doc.clickType) {
         case 'creature':
             this.showCreature = true;
             this.showPlayer = false;
@@ -133,22 +134,22 @@ export class LevelViewComponent implements OnInit  {
 
 
     initMove (yChange, xChange) {
-	    const enterType = this.player.wearingCreature ? 'canBodyEnter' : 'canEnter';
+	    const enterType = this.player.doc.wearingCreature ? 'canBodyEnter' : 'canEnter';
 	    if (
-	        this.player.wearingCreature
+	        this.player.doc.wearingCreature
             && this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp
         ) {
             this.batSer.initAttack(
-                this.tilesIndex.indexOf(this.player._id),
+                this.tilesIndex.indexOf(this.player.doc._id),
                 this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]),
-                this.player.wearingCreature.doc.attckType,
+                this.player.doc.wearingCreature.doc.attckType,
                 this.tiles
             );
         } else {
             this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
                 this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
         }
-        if (this.player.curHp <= 0) {
+        if (this.player.doc.curHp <= 0) {
             this.gameOverDialog();
         }
 
@@ -178,12 +179,11 @@ export class LevelViewComponent implements OnInit  {
 	resetPlayer() {
 		this.player.y = 7;
 		this.player.x = 7;
-		this.player.doc = {};
 		this.player.doc.color = '#2f00ff';
 		this.player.doc.displayAs = '@';
 		this.player.doc.clickType = 'player';
-        this.player.wearingCreature = false;
-		this.player.curHp = _.cloneDeep(this.player.hp);
+        this.player.doc.wearingCreature = false;
+		this.player.doc.curHp = _.cloneDeep(this.player.doc.hp);
 		for (const oneNpc in this.npcs) {
 			this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
 			this.npcs[oneNpc].x = _.cloneDeep(this.npcs[oneNpc].doc.origX);
@@ -238,7 +238,7 @@ export class LevelViewComponent implements OnInit  {
 
     possessCreature(creature, creatureIndex) {
         console.log(creature);
-        this.player.wearingCreature = creature;
+        this.player.doc.wearingCreature = creature;
         this.player.y = creature.y;
         this.player.x = creature.x;
         this.npcs.splice(this.npcs.indexOf(creature), 1);
@@ -250,14 +250,18 @@ export class LevelViewComponent implements OnInit  {
     }
 
     release() {
-	    this.player.curHp -= this.player.wearingCreature.doc.curLvl;
-        if (this.player.curHp <= 0) {
+	    this.player.doc.curHp -= this.player.wearingCreature.doc.curLvl;
+        if (this.player.doc.curHp <= 0) {
             this.gameOverDialog();
         } else {
-            this.player.wearingCreature = false;
+            this.player.doc.wearingCreature = false;
         }
 
         this.tiles = this.moveSer.deleteCreatureFocus(this.tiles, this.player);
+    }
+
+    viewCurFocus(currShowing){
+        return this.tiles[currShowing];
     }
 
 }

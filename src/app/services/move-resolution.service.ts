@@ -26,10 +26,10 @@ export class MoveResolutionService {
             movedObject.y += yChange;
             movedObject.x += xChange;
 
-            if (movedObject.wearingCreature) {
-                movedObject.wearingCreature.doc.curHp += movedObject.wearingCreature.doc.baseHpAdjust;
+            if (movedObject.doc.wearingCreature) {
+                movedObject.doc.wearingCreature.doc.curHp += movedObject.doc.wearingCreature.doc.baseHpAdjust;
             } else {
-                movedObject.curHp += movedObject.hpAdjust;
+                movedObject.doc.curHp += movedObject.doc.hpAdjust ? movedObject.doc.hpAdjust : movedObject.doc.baseHpAdjust;
             }
             movedObject.moved = true;
 
@@ -46,13 +46,13 @@ export class MoveResolutionService {
         for (const oneObj of movedObjects) {
             mapLive[oneObj.y][oneObj.x] = oneObj._id;
         }
-        mapLive[player.y][player.x] = player._id;
+        mapLive[player.y][player.x] = player.doc._id;
         return mapLive;
     }
 
     moveObjects(tiles, tilesIndex, mapBase, mapLive, player, movedObjects){
 
-        const playerMovement = player.wearingCreature ? player.wearingCreature.doc.movement : player.movement;
+        const playerMovement = player.doc.wearingCreature ? player.doc.wearingCreature.doc.movement : player.doc.movement;
 
         for (const oneObj in movedObjects) {
             if (

@@ -10,38 +10,38 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                 i Consciousness
             br
             b
-                i {{player.curHp}} / {{player.hp}}
+                i {{player.doc.curHp}} / {{player.doc.hp}}
             br
             br
 
             pre
-                span(*ngIf="!player.wearingCreature")
+                span(*ngIf="!player.doc.wearingCreature")
                     button(md-button md-raised-button class="moveButton",(click)="activateArea('possession')")
                         b
                             i POSSESS
-                span(*ngIf="player.wearingCreature")
+                span(*ngIf="player.doc.wearingCreature")
                     b
-                        i HP: {{player.wearingCreature.doc.curHp}} / {{player.wearingCreature.doc.baseHp}}
+                        i HP: {{player.doc.wearingCreature.doc.curHp}} / {{player.doc.wearingCreature.doc.baseHp}}
                     br
                     b
-                        i Lvl: {{player.wearingCreature.doc.curLvl}}
+                        i Lvl: {{player.doc.wearingCreature.doc.curLvl}}
                     br
                     b
-                        i Str: {{player.wearingCreature.doc.baseStr}}
+                        i Str: {{player.doc.wearingCreature.doc.baseStr}}
                     br
                     b
-                        i Agi: {{player.wearingCreature.doc.baseAgi}}
+                        i Agi: {{player.doc.wearingCreature.doc.baseAgi}}
 
                     br
                     b
-                        i Dex: {{player.wearingCreature.doc.baseDex}}
+                        i Dex: {{player.doc.wearingCreature.doc.baseDex}}
                     br
                     b
-                        i Def: {{player.wearingCreature.doc.baseDef}}
+                        i Def: {{player.doc.wearingCreature.doc.baseDef}}
                     br
                     b
 
-                        i Res: {{player.wearingCreature.doc.baseRes}}
+                        i Res: {{player.doc.wearingCreature.doc.baseRes}}
                     br
 
                     button(md-button md-raised-button class="moveButton",(click)="release()")
@@ -75,58 +75,58 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                     span(*ngFor="let oneTile of oneRow; let xAxis = index" class="levelTable")
                         //non-possessed
                         //non-active area
-                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].wearingCreature && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.possDistance))",[style.color]="tiles[tilesIndex.indexOf(oneTile)].doc.color",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
-                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].wearingCreature && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.possDistance))",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
+                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.doc.possDistance))",[style.color]="tiles[tilesIndex.indexOf(oneTile)].doc.color",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
+                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.doc.possDistance))",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
                         //active area
-                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].wearingCreature && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.possDistance))",[style.color] = "tiles[tilesIndex.indexOf(oneTile)].doc.color",[style.background]="actionField.bgColor",(click)="selectActiveArea('possession',yAxis, xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
-                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].wearingCreature && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.possDistance))",(click)="selectActiveArea('possession',yAxis,xAxis)",[style.background]="actionField.bgColor") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
+                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.doc.possDistance))",[style.color] = "tiles[tilesIndex.indexOf(oneTile)].doc.color",[style.background]="actionField.bgColor",(click)="selectActiveArea('possession',yAxis, xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
+                        b(*ngIf="!tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.doc.possDistance))",(click)="selectActiveArea('possession',yAxis,xAxis)",[style.background]="actionField.bgColor") {{tiles[tilesIndex.indexOf(oneTile)].doc.displayAs}}
 
                         //possessed
                         //non-active area
-                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].wearingCreature) && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.possDistance))",[style.color]="tiles[tilesIndex.indexOf(oneTile)].doc.color",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].wearingCreature.doc.displayAs}}
-                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].wearingCreature) && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.possDistance))",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].wearingCreature.doc.displayAs}}
+                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature) && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.doc.possDistance))",[style.color]="tiles[tilesIndex.indexOf(oneTile)].doc.color",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature.doc.displayAs}}
+                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature) && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === false || (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) > player.doc.possDistance))",(click)="checkAction(yAxis,xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature.doc.displayAs}}
                         //active area
-                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].wearingCreature) && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.possDistance))",[style.color] = "tiles[tilesIndex.indexOf(oneTile)].doc.color",[style.background]="actionField.bgColor",(click)="selectActiveArea('possession',yAxis, xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].wearingCreature.doc.displayAs}}
-                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].wearingCreature) && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.possDistance))",(click)="selectActiveArea('possession',yAxis,xAxis)",[style.background]="actionField.bgColor") {{tiles[tilesIndex.indexOf(oneTile)].wearingCreature.doc.displayAs}}
+                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature) && tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.doc.possDistance))",[style.color] = "tiles[tilesIndex.indexOf(oneTile)].doc.color",[style.background]="actionField.bgColor",(click)="selectActiveArea('possession',yAxis, xAxis)") {{tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature.doc.displayAs}}
+                        b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature) && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.doc.possDistance))",(click)="selectActiveArea('possession',yAxis,xAxis)",[style.background]="actionField.bgColor") {{tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature.doc.displayAs}}
 
         td(width="300px")
             div(align="center",*ngIf="showCreature")
                 b
-                    i HP: {{currShowing.doc.curHp}} / {{currShowing.doc.baseHp}}
+                    i HP: {{viewCurFocus(currShowing).doc.curHp}} / {{viewCurFocus(currShowing).doc.baseHp}}
                 br
                 b
-                    i Lvl: {{currShowing.doc.curLvl}}
+                    i Lvl: {{viewCurFocus(currShowing).doc.curLvl}}
                 br
                 b
-                    i Str: {{currShowing.doc.baseStr}}
+                    i Str: {{viewCurFocus(currShowing).doc.baseStr}}
                 br
                 b
-                    i Agi: {{currShowing.doc.baseAgi}}
+                    i Agi: {{viewCurFocus(currShowing).doc.baseAgi}}
 
                 br
                 b
-                    i Dex: {{currShowing.doc.baseDex}}
+                    i Dex: {{viewCurFocus(currShowing).doc.baseDex}}
                 br
                 b
-                    i Def: {{currShowing.doc.baseDef}}
+                    i Def: {{viewCurFocus(currShowing).doc.baseDef}}
                 br
                 b
 
-                    i Res: {{currShowing.doc.baseRes}}
+                    i Res: {{viewCurFocus(currShowing).doc.baseRes}}
                 br
                 p
                     b
-                        i {{currShowing.doc.description}}
+                        i {{viewCurFocus(currShowing).doc.description}}
                 br
 
             div(align="center",*ngIf="showPlayer")
                 p
                     b
-                        i {{currShowing.description}}
+                        i {{viewCurFocus(currShowing).doc.description}}
                     br
             div(align="center",*ngIf="showTile")
                 p
                     b
-                        i {{currShowing.doc.description}}
+                        i {{viewCurFocus(currShowing).doc.description}}
                     br
 

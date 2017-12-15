@@ -11,8 +11,8 @@ import { AuthService } from './authentication.service';
 
 @Injectable()
 export class WebService {
-	// BASE_URL = 'https://oversouled-back-dev-romantibensky.c9users.io/';
-	BASE_URL = 'https://oversouled-back.eu-gb.mybluemix.net/';
+    BASE_URL = 'http://localhost:8888/';
+	//BASE_URL = 'https://oversouled-back.eu-gb.mybluemix.net/';
 
 	private privateRelease = [];
 
