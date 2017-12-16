@@ -8,19 +8,28 @@ import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import {isNullOrUndefined} from "util";
+// import { BattleResolutionService } from './battle-resolution.service';
 
 
 @Injectable()
 export class MoveResolutionService {
+//    constructor(private batSer: BattleResolutionService){
+//    }
+
+
     initMove(tiles, tilesIndex, mapBase, mapLive, movedObject, yChange, xChange, howToEnter) {
 
-        const enterDecissionTile = tiles[tilesIndex.indexOf(mapBase[movedObject.y + yChange][movedObject.x + xChange])].wearingCreature
-            ? tiles[tilesIndex.indexOf(mapBase[movedObject.y + yChange][movedObject.x + xChange])].wearingCreature.doc[howToEnter]
+        const enterDecissionTile = tiles[tilesIndex.indexOf(mapBase[movedObject.y + yChange][movedObject.x + xChange])].doc.wearingCreature
+            ? tiles[tilesIndex.indexOf(mapBase[movedObject.y + yChange][movedObject.x + xChange])].doc.wearingCreature.doc[howToEnter]
             : tiles[tilesIndex.indexOf(mapBase[movedObject.y + yChange][movedObject.x + xChange])].doc[howToEnter];
 
-        const enterDeciddionLive = tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].wearingCreature
-            ? tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].wearingCreature.doc[howToEnter]
+        let enterDeciddionLive = tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].doc.wearingCreature
+            ? tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].doc.wearingCreature.doc[howToEnter]
             : tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].doc[howToEnter];
+
+        if(yChange === 0 && xChange === 0) {
+            enterDeciddionLive = true;
+        }
 
         if (enterDecissionTile && enterDeciddionLive) {
             movedObject.y += yChange;
@@ -50,7 +59,7 @@ export class MoveResolutionService {
         return mapLive;
     }
 
-    moveObjects(tiles, tilesIndex, mapBase, mapLive, player, movedObjects){
+    moveObjects(tiles, tilesIndex, mapBase, mapLive, player, movedObjects) {
 
         const playerMovement = player.doc.wearingCreature ? player.doc.wearingCreature.doc.movement : player.doc.movement;
 
@@ -60,11 +69,12 @@ export class MoveResolutionService {
                 && movedObjects[oneObj].doc.focus !== undefined
                 && movedObjects[oneObj].doc.focus.trim() !== ''
             ) {
-                this.focusedMove(tiles, tilesIndex, mapBase, mapLive, movedObjects[oneObj], playerMovement, 'canBodyEnter');
+                movedObjects = this.focusedMove(tiles, tilesIndex, mapBase, mapLive, oneObj, movedObjects, playerMovement, 'canBodyEnter');
             } else {
                 this.randomMove(tiles, tilesIndex, mapBase, mapLive, movedObjects[oneObj], playerMovement, 'canBodyEnter');
             }
 
+            mapLive = this.updateMap(mapLive, mapBase, player, movedObjects);
         }
 
         return movedObjects;
@@ -99,7 +109,7 @@ export class MoveResolutionService {
         return creatures;
     }
 
-    randomMove(tiles, tilesIndex, mapBase, mapLive, movedObj, playerMovement, canBodyEnter){
+    randomMove (tiles, tilesIndex, mapBase, mapLive, movedObj, playerMovement, canBodyEnter) {
 
         const diff = Math.floor(movedObj.doc.curMove + (movedObj.doc.movement / playerMovement )) - movedObj.doc.curMove;
         for (let i = 0; i < diff; i++ ) {
@@ -154,36 +164,83 @@ export class MoveResolutionService {
         return movedObj;
     }
 
-    focusedMove(tiles, tilesIndex, mapBase, mapLive, movedObj, playerMovement, canBodyEnter) {
-        const focusedChar  = tiles[tilesIndex.indexOf(movedObj.doc.focus)];
-        const diff = Math.floor(movedObj.doc.curMove + (movedObj.doc.movement / playerMovement )) - movedObj.doc.curMove;
+    focusedMove(tiles, tilesIndex, mapBase, mapLive, oneObj, movedObjects, playerMovement, canBodyEnter) {
+        let focusedChar  = tiles[tilesIndex.indexOf(movedObjects[oneObj].doc.focus)];
+        const diff = Math.floor(movedObjects[oneObj].doc.curMove + (movedObjects[oneObj].doc.movement / playerMovement )) - movedObjects[oneObj].doc.curMove;
         for (let i = 0; i < diff; i++ ) {
             let x = 0;
             let y = 0;
-            if (focusedChar.x  < movedObj.x) {
+            if (focusedChar.x  < movedObjects[oneObj].x) {
                  x = -1;
             }
-            if (focusedChar.x  > movedObj.x) {
+            if (focusedChar.x  > movedObjects[oneObj].x) {
                 x = 1;
             }
 
-            if (focusedChar.y  < movedObj.y) {
+            if (focusedChar.y  < movedObjects[oneObj].y) {
                 y = -1;
             }
-            if (focusedChar.y  > movedObj.y) {
+            if (focusedChar.y  > movedObjects[oneObj].y) {
                 y = 1;
             }
 
 
-            if (y !== 0 && x !== 0) {
-                movedObj = this.initMove(tiles, tilesIndex, mapBase, mapLive, movedObj, y, x, canBodyEnter);
+            if (y !== 0 || x !== 0) {
+                if (focusedChar.x === (movedObjects[oneObj].x + x) && focusedChar.y === (movedObjects[oneObj].y + y)) {
+                    focusedChar = this.initAttack(
+                        tilesIndex.indexOf(movedObjects[oneObj]._id || movedObjects[oneObj].doc._id),
+                        tilesIndex.indexOf(focusedChar._id || focusedChar.doc._id),
+                        movedObjects[oneObj].doc.wearingCreature ? movedObjects[oneObj].doc.wearingCreature.doc.attckTyp :  movedObjects[oneObj].doc.attckType,
+                        tiles
+                    )
+                } else {
+                    movedObjects[oneObj] = this.initMove(tiles, tilesIndex, mapBase, mapLive, movedObjects[oneObj], y, x, canBodyEnter);
+                }
+
             }
 
         }
 
-        movedObj.doc.curMove += (movedObj.doc.movement / playerMovement);
-        return movedObj;
+        movedObjects[oneObj].doc.curMove += (movedObjects[oneObj].doc.movement / playerMovement);
+        return movedObjects;
 
+    }
+
+    initAttack(attacker, target, attackType, tiles) {
+        const atckObj = tiles[attacker];
+        let trgtObj = tiles[target];
+        let atckDmg;
+        switch (attackType) {
+            case 'phys':
+                atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseStr : atckObj.doc.baseStr;
+                if (trgtObj.doc.wearingCreature) {
+                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0)
+                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef
+                        : trgtObj.doc.wearingCreature.doc.curHp;
+                } else {
+                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseDef > 0)
+                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef
+                        : trgtObj.doc.curHp;
+                }
+                break;
+            case 'mag':
+                atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseMgc : atckObj.doc.baseMgc;
+                if (trgtObj.doc.wearingCreature) {
+                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseRes > 0)
+                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes
+                        : trgtObj.doc.wearingCreature.doc.curHp;
+                } else {
+                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseRes > 0)
+                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes
+                        : trgtObj.doc.curHp;
+                }
+
+                break;
+        }
+
+        trgtObj = this.setCreatureFocus([trgtObj], atckObj.doc._id, true)[0];
+
+        return trgtObj;
     }
 
 

@@ -25,7 +25,6 @@ import { GameOverDialogComponent } from './dialogs/game-over.component';
 import { WebService } from './services/web.service';
 import { AuthService } from './services/authentication.service';
 import { MoveResolutionService } from './services/move-resolution.service';
-import { BattleResolutionService } from './services/battle-resolution.service';
 
 import { HttpModule } from '@angular/http';
 
@@ -97,7 +96,6 @@ let routes = [{
         WebService,
         AuthService,
         MoveResolutionService,
-        BattleResolutionService
     ]
 })
 export class AppModule { }

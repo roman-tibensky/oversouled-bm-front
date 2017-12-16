@@ -6,98 +6,90 @@
 import { Component, OnInit } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { MoveResolutionService } from '../services/move-resolution.service';
-import { BattleResolutionService } from '../services/battle-resolution.service';
+// import { BattleResolutionService } from '../services/battle-resolution.service';
 import { MdDialog } from '@angular/material';
 import { GameOverDialogComponent } from '../dialogs/game-over.component';
 import * as _ from 'lodash';
 // import { ReleaseNotesComponent } from './release-notes/release-notes.component';
 
 @Component({
-	selector: 'view-level',
-	templateUrl: `./view-level.component.html`,
+    selector: 'view-level',
+    templateUrl: `./view-level.component.html`,
 })
 
 export class LevelViewComponent implements OnInit  {
 
-	mapBase;
-	mapLive;
-	player;
-	tiles;
-	tilesIndex;
-	isLoading;
-	npcs;
-	showCreature;
-	showPlayer;
-	showTile;
-	currShowing;
-	actionField;
-	Math;
+    mapBase;
+    mapLive;
+    player;
+    tiles;
+    tilesIndex;
+    isLoading;
+    npcs;
+    showCreature;
+    showPlayer;
+    showTile;
+    currShowing;
+    actionField;
+    Math;
 
-	constructor(
-		private webSer: WebService,
-		private dialog: MdDialog,
-		private moveSer: MoveResolutionService,
-        private batSer: BattleResolutionService
-	) {
-		this.isLoading = true;
-		this.tilesIndex = [];
-		this.showCreature = false;
-		this.showPlayer = false;
-		this.showTile = false;
-		this.currShowing = {};
-		this.Math = Math;
-		this.actionField = {
-			activated: false,
-			bgColor: '',
-			canBodyEnter: false,
-			canEnter: false,
-			poxX: 0,
-			posY: 0,
-			radius: 0,
-		};
+    constructor(
+        private webSer: WebService,
+        private dialog: MdDialog,
+        private moveSer: MoveResolutionService,
+        // private batSer: BattleResolutionService
+    ) {
+        this.isLoading = true;
+        this.tilesIndex = [];
+        this.showCreature = false;
+        this.showPlayer = false;
+        this.showTile = false;
+        this.currShowing = {};
+        this.Math = Math;
+        this.actionField = {
+            activated: false,
+            bgColor: '',
+            canBodyEnter: false,
+            canEnter: false,
+            poxX: 0,
+            posY: 0,
+            radius: 0,
+        };
 
-	}
-
-
-
-	ngOnInit() {
-		this.webSer.loadFirstLevel().subscribe(result => {
-			this.mapBase = result.mapData.tiles;
-
-			this.tiles = result.tileData.rows;
-			this.player = result.playerData;
-			this.npcs = result.npcData;
+    }
 
 
 
-			this.tilesIndex = this.tiles.map(oneTile => oneTile.id);
-			this.tiles.push(this.player);
-			this.tilesIndex.push(this.player.doc._id);
+    ngOnInit() {
+        this.webSer.loadFirstLevel().subscribe(result => {
+            this.mapBase = result.mapData.tiles;
 
-			for (const oneNpc in this.npcs) {
-				this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
-				this.npcs[oneNpc].doc.curLvl = _.cloneDeep(this.npcs[oneNpc].doc.baseLevel);
-				this.npcs[oneNpc].doc.origX = _.cloneDeep(this.npcs[oneNpc].x);
-				this.npcs[oneNpc].doc.origY = _.cloneDeep(this.npcs[oneNpc].y);
-				this.npcs[oneNpc].doc.curMove = 0;
-				this.tiles.push(this.npcs[oneNpc]);
-				this.tilesIndex.push(this.npcs[oneNpc]._id);
-			}
+            this.tiles = result.tileData.rows;
+            this.player = result.playerData;
+            this.npcs = result.npcData;
 
-			this.resetPlayer();
+            this.tilesIndex = this.tiles.map(oneTile => oneTile.id);
+            this.tiles.push(this.player);
+            this.tilesIndex.push(this.player.doc._id);
 
-			this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+            for (const oneNpc in this.npcs) {
+                this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
+                this.npcs[oneNpc].doc.curLvl = _.cloneDeep(this.npcs[oneNpc].doc.baseLevel);
+                this.npcs[oneNpc].doc.origX = _.cloneDeep(this.npcs[oneNpc].x);
+                this.npcs[oneNpc].doc.origY = _.cloneDeep(this.npcs[oneNpc].y);
+                this.npcs[oneNpc].doc.curMove = 0;
+                this.tiles.push(this.npcs[oneNpc]);
+                this.tilesIndex.push(this.npcs[oneNpc]._id);
+            }
 
-			for (const yAxis in this.mapLive)  {
-				for (const xAxis in this.mapLive[yAxis]) {
-					console.log(this.actionField.activated === false || (((this.player.y - Number(yAxis) > this.player.doc.possDistance) || (this.player.y - Number(yAxis) < -this.player.doc.possDistance)) && ((this.player.x - Number(xAxis) > this.player.doc.possDistance) && this.player.x - Number(xAxis) < -this.player.doc.possDistance)));
-				}
-			}
+            this.resetPlayer();
 
-			console.log(this.player);
-			this.isLoading = false;
+            this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
 
-		});
+            console.log(this.player);
+            this.isLoading = false;
+
+        });
 
 
 
@@ -109,42 +101,50 @@ export class LevelViewComponent implements OnInit  {
         // this.currShowing = _.cloneDeep(this.tiles[this.tilesIndex.indexOf(this.mapLive[y][x])]);
         this.currShowing = this.tilesIndex.indexOf(this.mapLive[y][x]);
         switch (this.tiles[this.currShowing].doc.clickType) {
-        case 'creature':
-            this.showCreature = true;
-            this.showPlayer = false;
-            this.showTile = false;
-            break;
-        case 'player':
-            this.showCreature = false;
-            this.showPlayer = true;
-            this.showTile = false;
-            break;
-        case 'tile':
-            this.showCreature = false;
-            this.showPlayer = false;
-            this.showTile = true;
-            break;
-        default:
-            this.showCreature = false;
-            this.showPlayer = false;
-            this.showTile = false;
-            break;
+            case 'creature':
+                this.showCreature = true;
+                this.showPlayer = false;
+                this.showTile = false;
+                break;
+            case 'player':
+                this.showCreature = false;
+                this.showPlayer = true;
+                this.showTile = false;
+                break;
+            case 'tile':
+                this.showCreature = false;
+                this.showPlayer = false;
+                this.showTile = true;
+                break;
+            default:
+                this.showCreature = false;
+                this.showPlayer = false;
+                this.showTile = false;
+                break;
         }
     }
 
 
     initMove (yChange, xChange) {
-	    const enterType = this.player.doc.wearingCreature ? 'canBodyEnter' : 'canEnter';
-	    if (
-	        this.player.doc.wearingCreature
+        const enterType = this.player.doc.wearingCreature ? 'canBodyEnter' : 'canEnter';
+        if (
+            this.player.doc.wearingCreature
             && this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp
+            && this.tilesIndex.indexOf(this.player.doc._id) !== this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])
         ) {
-            this.batSer.initAttack(
+            this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])] = this.moveSer.initAttack(
                 this.tilesIndex.indexOf(this.player.doc._id),
                 this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]),
                 this.player.doc.wearingCreature.doc.attckType,
                 this.tiles
             );
+            if (this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp <= 0) {
+                const creatureIndex = this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]);
+                this.npcs.splice(this.npcs.indexOf(this.tiles[creatureIndex]), 1);
+                this.tiles.splice(creatureIndex, 1);
+                this.tilesIndex.splice(creatureIndex, 1);
+                this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+            }
         } else {
             this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
                 this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
@@ -154,66 +154,70 @@ export class LevelViewComponent implements OnInit  {
         }
 
         if (this.player.moved) {
+            this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
             this.moveSer.moveObjects(this.tiles, this.tilesIndex, this.mapBase, this.mapLive, this.player, this.npcs);
             this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+            if (this.player.doc.wearingCreature && this.player.doc.wearingCreature.doc.curHp <= 0) {
+                this.release();
+            }
         }
 
     }
 
 
-	gameOverDialog() {
-		const dialogRef = this.dialog.open(GameOverDialogComponent, {
-			width: '300px',
-			disableClose: true
-		});
+    gameOverDialog() {
+        const dialogRef = this.dialog.open(GameOverDialogComponent, {
+            width: '300px',
+            disableClose: true
+        });
 
 
 
-		dialogRef.afterClosed().subscribe(result => {
-			console.log(`Dialog closed: ${result}`);
-			this.resetPlayer();
-			this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
-		});
-	}
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(`Dialog closed: ${result}`);
+            this.resetPlayer();
+            this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+        });
+    }
 
-	resetPlayer() {
-		this.player.y = 7;
-		this.player.x = 7;
-		this.player.doc.color = '#2f00ff';
-		this.player.doc.displayAs = '@';
-		this.player.doc.clickType = 'player';
+    resetPlayer() {
+        this.player.y = 7;
+        this.player.x = 7;
+        this.player.doc.color = '#2f00ff';
+        this.player.doc.displayAs = '@';
+        this.player.doc.clickType = 'player';
         this.player.doc.wearingCreature = false;
-		this.player.doc.curHp = _.cloneDeep(this.player.doc.hp);
-		for (const oneNpc in this.npcs) {
-			this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
-			this.npcs[oneNpc].x = _.cloneDeep(this.npcs[oneNpc].doc.origX);
-			this.npcs[oneNpc].y = _.cloneDeep(this.npcs[oneNpc].doc.origY);
-		}
-	}
+        this.player.doc.curHp = _.cloneDeep(this.player.doc.hp);
+        for (const oneNpc in this.npcs) {
+            this.npcs[oneNpc].doc.curHp = _.cloneDeep(this.npcs[oneNpc].doc.baseHp);
+            this.npcs[oneNpc].x = _.cloneDeep(this.npcs[oneNpc].doc.origX);
+            this.npcs[oneNpc].y = _.cloneDeep(this.npcs[oneNpc].doc.origY);
+        }
+    }
 
-	activateArea(arType: string) {
-		console.log(arType);
-		switch (arType) {
-			case 'possession':
-				this.setPossessionArea();
-				break;
-			default:
-				console.log('unknown action');
-				break;
-		}
-	}
+    activateArea(arType: string) {
+        console.log(arType);
+        switch (arType) {
+            case 'possession':
+                this.setPossessionArea();
+                break;
+            default:
+                console.log('unknown action');
+                break;
+        }
+    }
 
-	setPossessionArea() {
-		this.actionField = {
-			activated: true,
-			bgColor: '#140194', // '#0077FF',
-			canBodyEnter: false,
-			canEnter: false,
-			poxX: 0,
-			posY: 0,
-			radius: 0,
-		};
-	}
+    setPossessionArea() {
+        this.actionField = {
+            activated: true,
+            bgColor: '#140194', // '#0077FF',
+            canBodyEnter: false,
+            canEnter: false,
+            poxX: 0,
+            posY: 0,
+            radius: 0,
+        };
+    }
 
     selectActiveArea(arType, yAxis, xAxis) {
         this.actionField.activated = false;
@@ -245,12 +249,12 @@ export class LevelViewComponent implements OnInit  {
         this.tiles.splice(creatureIndex, 1);
         this.tilesIndex.splice(creatureIndex, 1);
         this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
-        this.tiles = this.moveSer.setCreatureFocus(this.tiles, this.player._id, false);
+        this.tiles = this.moveSer.setCreatureFocus(this.tiles, this.player.doc._id, false);
         console.log(this.tiles);
     }
 
     release() {
-	    this.player.doc.curHp -= this.player.wearingCreature.doc.curLvl;
+        this.player.doc.curHp -= this.player.doc.wearingCreature.doc.curLvl;
         if (this.player.doc.curHp <= 0) {
             this.gameOverDialog();
         } else {
