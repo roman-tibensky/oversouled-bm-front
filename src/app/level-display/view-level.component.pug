@@ -90,7 +90,11 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                         b(*ngIf="(tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature) && !tiles[tilesIndex.indexOf(oneTile)].doc.color && (actionField.activated === true && (Math.abs(player.y - yAxis) + Math.abs(player.x -xAxis) <= player.doc.possDistance))",(click)="selectActiveArea('possession',yAxis,xAxis)",[style.background]="actionField.bgColor") {{tiles[tilesIndex.indexOf(oneTile)].doc.wearingCreature.doc.displayAs}}
 
         td(width="300px")
-            div(align="center",*ngIf="showCreature")
+            div(align="center",*ngIf="showCreature && viewCurFocus(currShowing)")
+                b
+                    i {{viewCurFocus(currShowing).doc.name}}
+                br
+                br
                 b
                     i HP: {{viewCurFocus(currShowing).doc.curHp}} / {{viewCurFocus(currShowing).doc.baseHp}}
                 br

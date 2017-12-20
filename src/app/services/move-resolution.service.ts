@@ -224,10 +224,10 @@ export class MoveResolutionService {
                     if (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0) {
                         trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef;
                         this.addMessages([
-                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef}`
+                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.wearingCreature.doc.baseDef}`
                         ]);
                     } else {
-                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
                     }
 
                 // physical dmg directly to creature
@@ -235,11 +235,11 @@ export class MoveResolutionService {
                     if (atckDmg - trgtObj.doc.baseDef > 0) {
                         trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef;
                         this.addMessages([
-                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.baseDef}`
+                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.baseDef}`
                         ]);
                     } else {
 
-                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
                     }
                 }
                 break;
@@ -250,10 +250,10 @@ export class MoveResolutionService {
                     if (atckDmg - trgtObj.doc.wearingCreature.doc.baseRes > 0) {
                         trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes;
                         this.addMessages([
-                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes}`
+                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.wearingCreature.doc.baseRes}`
                         ]);
                     } else {
-                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
                     }
                 // magical dmg directly to creature
                 } else {
@@ -261,10 +261,10 @@ export class MoveResolutionService {
                         trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes;
 
                         this.addMessages([
-                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes}`
+                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.baseRes}`
                         ]);
                     } else {
-                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
                     }
                 }
 

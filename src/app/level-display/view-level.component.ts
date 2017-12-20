@@ -160,7 +160,7 @@ export class LevelViewComponent implements OnInit  {
             if (this.player.doc.wearingCreature && this.player.doc.wearingCreature.doc.curHp <= 0) {
                 this.release();
             }
-            if(this.npcs.length === 0) {
+            if (this.npcs.length === 0) {
                 this.gameOverDialog(false);
             }
         }
@@ -257,7 +257,10 @@ export class LevelViewComponent implements OnInit  {
         this.tilesIndex.splice(creatureIndex, 1);
         this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
         this.tiles = this.moveSer.setCreatureFocus(this.tiles, this.player.doc._id, false);
-        this.moveSer.addMessages([this.player.doc.wearingCreature.doc.displayAs + ' is now a slave to your will.']);
+        this.moveSer.addMessages([this.player.doc.wearingCreature.doc.name + ' is now a slave to your will.']);
+        if (this.npcs.length === 0) {
+            this.gameOverDialog(false);
+        }
     }
 
     release() {
