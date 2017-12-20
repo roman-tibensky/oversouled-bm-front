@@ -8,13 +8,19 @@ import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import {isNullOrUndefined} from "util";
-// import { BattleResolutionService } from './battle-resolution.service';
+//import { LogDisplayComponent } from '../log-display/log-display.component'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 
 
 @Injectable()
 export class MoveResolutionService {
-//    constructor(private batSer: BattleResolutionService){
-//    }
+
+    private messageSource = new BehaviorSubject<string>('');
+    currentMessage = this.messageSource.asObservable();
+
+    constructor() {
+    }
 
 
     initMove(tiles, tilesIndex, mapBase, mapLive, movedObject, yChange, xChange, howToEnter) {
@@ -213,26 +219,53 @@ export class MoveResolutionService {
         switch (attackType) {
             case 'phys':
                 atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseStr : atckObj.doc.baseStr;
+                // physical dmg to possessed creature
                 if (trgtObj.doc.wearingCreature) {
-                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0)
-                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef
-                        : trgtObj.doc.wearingCreature.doc.curHp;
+                    if (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0) {
+                        trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef;
+                        this.addMessages([
+                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef}`
+                        ]);
+                    } else {
+                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                    }
+
+                // physical dmg directly to creature
                 } else {
-                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseDef > 0)
-                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef
-                        : trgtObj.doc.curHp;
+                    if (atckDmg - trgtObj.doc.baseDef > 0) {
+                        trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef;
+                        this.addMessages([
+                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.baseDef}`
+                        ]);
+                    } else {
+
+                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                    }
                 }
                 break;
             case 'mag':
                 atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseMgc : atckObj.doc.baseMgc;
+                // magical dmg to possessed creature
                 if (trgtObj.doc.wearingCreature) {
-                    trgtObj.doc.wearingCreature.doc.curHp = (atckDmg - trgtObj.doc.wearingCreature.doc.baseRes > 0)
-                        ? trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes
-                        : trgtObj.doc.wearingCreature.doc.curHp;
+                    if (atckDmg - trgtObj.doc.wearingCreature.doc.baseRes > 0) {
+                        trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes;
+                        this.addMessages([
+                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseRes}`
+                        ]);
+                    } else {
+                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                    }
+                // magical dmg directly to creature
                 } else {
-                    trgtObj.doc.curHp = (atckDmg - trgtObj.doc.baseRes > 0)
-                        ? trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes
-                        : trgtObj.doc.curHp;
+                    if (atckDmg - trgtObj.doc.baseRes > 0) {
+                        trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes;
+
+                        this.addMessages([
+                            `${atckObj.doc.displayAs} hits ${trgtObj.doc.displayAs} for ${trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseRes}`
+                        ]);
+                    } else {
+                        this.addMessages([`${atckObj.doc.displayAs} fails to penetrate  ${trgtObj.doc.displayAs}'s defences`]);
+                    }
                 }
 
                 break;
@@ -244,4 +277,26 @@ export class MoveResolutionService {
     }
 
 
+    // log communications
+/*
+    deleteMessages() {
+        this.messageEvent.emit('delete#');
+        //this.logDis.deleteMessages();
+    }
+
+    addMessages(newMessages) {
+        this.messageEvent.emit('add#' + newMessages.join('#'));
+        //this.logDis.addMessages(newMessages);
+    }
+*/
+
+    deleteMessages() {
+
+        this.messageSource.next('delete');
+    }
+
+    addMessages(newMessages) {
+
+        this.messageSource.next('add#' + newMessages.join('#'));
+    }
 }

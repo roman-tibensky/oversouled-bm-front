@@ -39,6 +39,16 @@ body {
 	color: #bfbb05;
 }
 
+.logDisplay {
+    background: #111111;
+    color: #bfbb05;
+    width: 500px;
+    height: 100px;
+    flex: none;
+    overflow: auto;
+
+}
+
 p {
 	font-family: Courier
 }

@@ -1,0 +1,23 @@
+div(*ngIf="data.gameOver" align="center")
+    b
+        i You were scattered to the winds
+    br
+    b
+        i Like a scream that never was
+    br
+    br
+    button(md-button md-raised-button,class="redButton",(click)="close()")
+        b
+            i I will never stop
+
+div(*ngIf="!data.gameOver" align="center")
+    b
+        i You cling to the last surviving creature
+    br
+    b
+        i Once it dies there's no more bodies to "borrow"
+    br
+    br
+    button(md-button md-raised-button,class="redButton",(click)="close()")
+    b
+        i Time to move on

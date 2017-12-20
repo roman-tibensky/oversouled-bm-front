@@ -150,7 +150,7 @@ export class LevelViewComponent implements OnInit  {
                 this.mapBase, this.mapLive, this.player, yChange, xChange, enterType);
         }
         if (this.player.doc.curHp <= 0) {
-            this.gameOverDialog();
+            this.gameOverDialog(true);
         }
 
         if (this.player.moved) {
@@ -160,18 +160,23 @@ export class LevelViewComponent implements OnInit  {
             if (this.player.doc.wearingCreature && this.player.doc.wearingCreature.doc.curHp <= 0) {
                 this.release();
             }
+            if(this.npcs.length === 0) {
+                this.gameOverDialog(false);
+            }
         }
 
     }
 
 
-    gameOverDialog() {
+    gameOverDialog(gameOver: boolean) {
         const dialogRef = this.dialog.open(GameOverDialogComponent, {
             width: '300px',
-            disableClose: true
+            disableClose: true,
+            data: {
+                gameOver: gameOver
+            }
+
         });
-
-
 
         dialogRef.afterClosed().subscribe(result => {
             console.log(`Dialog closed: ${result}`);
@@ -193,6 +198,8 @@ export class LevelViewComponent implements OnInit  {
             this.npcs[oneNpc].x = _.cloneDeep(this.npcs[oneNpc].doc.origX);
             this.npcs[oneNpc].y = _.cloneDeep(this.npcs[oneNpc].doc.origY);
         }
+        this.moveSer.deleteMessages();
+        this.moveSer.addMessages(['You enter a new world. Your consciousness is about to give in.'])
     }
 
     activateArea(arType: string) {
@@ -250,18 +257,23 @@ export class LevelViewComponent implements OnInit  {
         this.tilesIndex.splice(creatureIndex, 1);
         this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
         this.tiles = this.moveSer.setCreatureFocus(this.tiles, this.player.doc._id, false);
-        console.log(this.tiles);
+        this.moveSer.addMessages([this.player.doc.wearingCreature.doc.displayAs + ' is now a slave to your will.']);
     }
 
     release() {
         this.player.doc.curHp -= this.player.doc.wearingCreature.doc.curLvl;
+        const message = this.player.doc.wearingCreature.doc.curHp <= 0 ?
+            `Body of ${this.player.doc.wearingCreature.doc} becomes unusable and you are violently trust out` :
+            `You tear yourself away from your borrowed body. It falls limp to the ground.`;
+
         if (this.player.doc.curHp <= 0) {
-            this.gameOverDialog();
+            this.gameOverDialog(true);
         } else {
             this.player.doc.wearingCreature = false;
         }
 
-        this.tiles = this.moveSer.deleteCreatureFocus(this.tiles, this.player);
+        this.tiles = this.moveSer.deleteCreatureFocus(this.tiles, this.player.doc._id);
+        this.moveSer.addMessages([message, 'Your consciousness starts fading again.']);
     }
 
     viewCurFocus(currShowing){

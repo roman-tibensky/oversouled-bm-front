@@ -18,6 +18,7 @@ import { RegUserComponent } from './account-management/reg-user.component';
 import { LoginComponent } from './account-management/login.component';
 import { EditUserComponent } from './account-management/edit-user.component';
 import { LevelViewComponent } from './level-display/view-level.component';
+import { LogDisplayComponent } from './log-display/log-display.component';
 
 
 import { GameOverDialogComponent } from './dialogs/game-over.component';
@@ -85,6 +86,7 @@ let routes = [{
         EditUserComponent,
         LevelViewComponent,
         GameOverDialogComponent,
+        LogDisplayComponent
     ],
   entryComponents: [
     GameOverDialogComponent,
@@ -96,6 +98,7 @@ let routes = [{
         WebService,
         AuthService,
         MoveResolutionService,
+        LogDisplayComponent
     ]
 })
 export class AppModule { }
