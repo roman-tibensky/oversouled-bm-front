@@ -142,6 +142,9 @@ export class LevelViewComponent implements OnInit  {
                 this.player.doc.wearingCreature.doc.attckType,
                 this.tiles
             );
+
+            this.player.moved = true;
+
             if (this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp <= 0) {
                 const creatureIndex = this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]);
                 this.npcs.splice(this.npcs.indexOf(this.tiles[creatureIndex]), 1);

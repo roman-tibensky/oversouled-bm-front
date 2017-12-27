@@ -33,7 +33,7 @@ export class MoveResolutionService {
             ? tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].doc.wearingCreature.doc[howToEnter]
             : tiles[tilesIndex.indexOf(mapLive[movedObject.y + yChange][movedObject.x + xChange])].doc[howToEnter];
 
-        if(yChange === 0 && xChange === 0) {
+        if (yChange === 0 && xChange === 0) {
             enterDeciddionLive = true;
         }
 
