@@ -272,7 +272,7 @@ export class LevelViewComponent implements OnInit  {
     release() {
         this.player.doc.curHp -= this.player.doc.wearingCreature.doc.curLvl;
         const message = this.player.doc.wearingCreature.doc.curHp <= 0 ?
-            `Body of ${this.player.doc.wearingCreature.doc} becomes unusable and you are violently trust out` :
+            `Body of ${this.player.doc.wearingCreature.doc.name} becomes unusable and you are violently trust out` :
             `You tear yourself away from your borrowed body. It falls limp to the ground.`;
 
         if (this.player.doc.curHp <= 0) {
