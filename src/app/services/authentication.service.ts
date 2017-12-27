@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthService {
-    BASE_URL = 'http://localhost:8888/';
-    // BASE_URL = 'https://oversouled-back.eu-gb.mybluemix.net/';
+    // BASE_URL = 'http://localhost:8888/';
+    BASE_URL = 'https://oversouled-back.eu-gb.mybluemix.net/';
 
     constructor(
         private http: Http,

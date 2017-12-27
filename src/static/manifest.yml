@@ -12,4 +12,3 @@ env:
     NODE_TLS_REJECT_UNAUTHORIZED: 0
     TEST: "hi there"
     BACK_URL: https://oversouled-back.eu-gb.mybluemix.net/
-

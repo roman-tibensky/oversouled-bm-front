@@ -61,6 +61,10 @@ export class LevelViewComponent implements OnInit  {
 
 
     ngOnInit() {
+        this.createLevel();
+    }
+
+    createLevel() {
         this.webSer.loadFirstLevel().subscribe(result => {
             this.mapBase = result.mapData.tiles;
 
@@ -180,8 +184,7 @@ export class LevelViewComponent implements OnInit  {
 
         dialogRef.afterClosed().subscribe(result => {
             console.log(`Dialog closed: ${result}`);
-            this.resetPlayer();
-            this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+            this.createLevel();
         });
     }
 
