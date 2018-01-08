@@ -216,31 +216,41 @@ export class MoveResolutionService {
         const atckObj = tiles[attacker];
         let trgtObj = tiles[target];
         let atckDmg;
+        let hitAttempts;
+        let evadeAttempts;
         switch (attackType) {
             case 'phys':
-                atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseStr : atckObj.doc.baseStr;
-                // physical dmg to possessed creature
-                if (trgtObj.doc.wearingCreature) {
-                    if (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0) {
-                        trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef;
-                        this.addMessages([
-                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.wearingCreature.doc.baseDef}`
-                        ]);
-                    } else {
-                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
-                    }
+                hitAttempts = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseDex : atckObj.doc.baseDex;
+                evadeAttempts = trgtObj.doc.wearingCreature ? trgtObj.doc.wearingCreature.doc.baseAgi : trgtObj.doc.baseAgi;
 
-                // physical dmg directly to creature
+                if (this.isHitValid(hitAttempts, evadeAttempts)) {
+
+                    atckDmg = atckObj.doc.wearingCreature ? atckObj.doc.wearingCreature.doc.baseStr : atckObj.doc.baseStr;
+                    // physical dmg to possessed creature
+                    if (trgtObj.doc.wearingCreature) {
+                        if (atckDmg - trgtObj.doc.wearingCreature.doc.baseDef > 0) {
+                            trgtObj.doc.wearingCreature.doc.curHp = trgtObj.doc.wearingCreature.doc.curHp - atckDmg + trgtObj.doc.wearingCreature.doc.baseDef;
+                            this.addMessages([
+                                `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.wearingCreature.doc.baseDef}`
+                            ]);
+                        } else {
+                            this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
+                        }
+
+                        // physical dmg directly to creature
+                    } else {
+                        if (atckDmg - trgtObj.doc.baseDef > 0) {
+                            trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef;
+                            this.addMessages([
+                                `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.baseDef}`
+                            ]);
+                        } else {
+
+                            this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
+                        }
+                    }
                 } else {
-                    if (atckDmg - trgtObj.doc.baseDef > 0) {
-                        trgtObj.doc.curHp = trgtObj.doc.curHp - atckDmg + trgtObj.doc.baseDef;
-                        this.addMessages([
-                            `${atckObj.doc.name} hits ${trgtObj.doc.name} for ${atckDmg - trgtObj.doc.baseDef}`
-                        ]);
-                    } else {
-
-                        this.addMessages([`${atckObj.doc.name} fails to penetrate  ${trgtObj.doc.name}'s defences`]);
-                    }
+                    this.addMessages([`${atckObj.doc.name}'s attack misses ${trgtObj.doc.name}`]);
                 }
                 break;
             case 'mag':
@@ -299,4 +309,32 @@ export class MoveResolutionService {
 
         this.messageSource.next('add#' + newMessages.join('#'));
     }
+
+
+    isHitValid(attackerDex, deffenderAgi) {
+        let finalHit = 0;
+        let finalEvade = 0;
+
+        for (let i = 0; i < attackerDex; i++) {
+            const rndm = Math.random();
+            if (rndm > finalHit) {
+                finalHit = rndm;
+            }
+        }
+
+        for (let i = 0; i < deffenderAgi; i++) {
+            const rndm = Math.random();
+            if (rndm > finalEvade) {
+                finalEvade = rndm;
+            }
+        }
+
+        return (finalHit >= finalEvade);
+
+    }
+
+
+
 }
+
+
