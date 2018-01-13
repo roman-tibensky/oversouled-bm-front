@@ -146,11 +146,18 @@ export class LevelViewComponent implements OnInit  {
             this.player.moved = true;
 
             if (this.tiles[this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange])].doc.curHp <= 0) {
+
                 const creatureIndex = this.tilesIndex.indexOf(this.mapLive[this.player.y + yChange][this.player.x + xChange]);
+                this.player.doc.wearingCreature.doc.curExp += this.tiles[creatureIndex].doc.wearingCreature
+                    ? this.tiles[creatureIndex].doc.wearingCreature.doc.baseLevel
+                    : this.tiles[creatureIndex].doc.baseLevel;
                 this.npcs.splice(this.npcs.indexOf(this.tiles[creatureIndex]), 1);
                 this.tiles.splice(creatureIndex, 1);
                 this.tilesIndex.splice(creatureIndex, 1);
                 this.mapLive = this.moveSer.updateMap(this.mapLive, this.mapBase, this.player, this.npcs);
+                if ((this.player.doc.wearingCreature.doc.baseLevel) * 1 <= this.player.doc.wearingCreature.doc.curExp) {
+                    this.player.doc.wearingCreature.doc = this.moveSer.levelUpCreature(this.player.doc.wearingCreature.doc);
+                }
             }
         } else {
             this.player = this.moveSer.initMove(this.tiles, this.tilesIndex,
@@ -169,6 +176,8 @@ export class LevelViewComponent implements OnInit  {
             }
             if (this.npcs.length === 0) {
                 this.gameOverDialog(false);
+            } else if (this.player.doc.wearingCreature) {
+                this.moveSer.addMessages(['~~~~ END TURN ~~~~'])
             }
         }
 
@@ -256,6 +265,13 @@ export class LevelViewComponent implements OnInit  {
     possessCreature(creature, creatureIndex) {
         console.log(creature);
         this.player.doc.wearingCreature = creature;
+        if (!this.player.doc.wearingCreature.doc.curExp) {
+            this.player.doc.wearingCreature.doc.curExp = 0;
+        }
+        if (!this.player.doc.wearingCreature.doc.abilityPoints) {
+            this.player.doc.wearingCreature.doc.abilityPoints = 0;
+        }
+
         this.player.y = creature.y;
         this.player.x = creature.x;
         this.npcs.splice(this.npcs.indexOf(creature), 1);
@@ -287,6 +303,19 @@ export class LevelViewComponent implements OnInit  {
 
     viewCurFocus(currShowing){
         return this.tiles[currShowing];
+    }
+
+    addPoints(stat) {
+        if (this.player.doc.wearingCreature.doc.abilityPoints > 0) {
+            if (stat === 'baseHp') {
+                this.player.doc.wearingCreature.doc.baseHp++;
+                this.player.doc.wearingCreature.doc.curHp++;
+            } else {
+                this.player.doc.wearingCreature.doc[stat]++;
+            }
+
+            this.player.doc.wearingCreature.doc.abilityPoints--;
+        }
     }
 
 }

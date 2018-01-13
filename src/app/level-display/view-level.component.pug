@@ -21,7 +21,14 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                             i POSSESS
                 span(*ngIf="player.doc.wearingCreature")
                     b
-                        i HP: {{player.doc.wearingCreature.doc.curHp}} / {{player.doc.wearingCreature.doc.baseHp}}
+                        i next Level: {{((player.doc.wearingCreature.doc.baseLevel) * 1) - player.doc.wearingCreature.doc.curExp}}
+                    br
+                    b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#FFFFFF;') Ability points: {{player.doc.wearingCreature.doc.abilityPoints}}
+                    br
+
+                    b
+                        i HP: {{player.doc.wearingCreature.doc.curHp}} / {{player.doc.wearingCreature.doc.baseHp}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseHp')") +
                     br
                     b
                         i Movement Speed: {{player.doc.wearingCreature.doc.movement}}
@@ -30,21 +37,26 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                         i Lvl: {{player.doc.wearingCreature.doc.curLvl}}
                     br
                     b
-                        i Str: {{player.doc.wearingCreature.doc.baseStr}}
+                        i Str: {{player.doc.wearingCreature.doc.baseStr}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseStr')") +
                     br
                     b
-                        i Agi: {{player.doc.wearingCreature.doc.baseAgi}}
+                        i Agi: {{player.doc.wearingCreature.doc.baseAgi}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseAgi')") +
 
                     br
                     b
-                        i Dex: {{player.doc.wearingCreature.doc.baseDex}}
+                        i Dex: {{player.doc.wearingCreature.doc.baseDex}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseDex')") +
                     br
                     b
-                        i Def: {{player.doc.wearingCreature.doc.baseDef}}
+                        i Def: {{player.doc.wearingCreature.doc.baseDef}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseDef')") +
                     br
                     b
 
-                        i Res: {{player.doc.wearingCreature.doc.baseRes}}
+                        i Res: {{player.doc.wearingCreature.doc.baseRes}} &nbsp;&nbsp;
+                        b(*ngIf='player.doc.wearingCreature.doc.abilityPoints > 0',style='color:#0000FF;cursor: pointer',(click)="addPoints('baseRes')") +
                     br
 
                     button(md-button md-raised-button class="moveButton",(click)="release()")
@@ -100,6 +112,7 @@ table(*ngIf="!isLoading" align="center" class='oneStory')
                 br
                 b
                     i HP: {{viewCurFocus(currShowing).doc.curHp}} / {{viewCurFocus(currShowing).doc.baseHp}}
+
                 br
                 b
                     i Movement Speed: {{viewCurFocus(currShowing).doc.movement}}

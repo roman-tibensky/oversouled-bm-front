@@ -334,6 +334,14 @@ export class MoveResolutionService {
     }
 
 
+    levelUpCreature(creature) {
+        creature.curExp = 0;
+        creature.curLvl++;
+        creature.abilityPoints += 5;
+        creature.curHp = creature.baseHp;
+
+        return creature;
+    }
 
 }
 
