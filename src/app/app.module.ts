@@ -19,6 +19,7 @@ import { LoginComponent } from './account-management/login.component';
 import { EditUserComponent } from './account-management/edit-user.component';
 import { LevelViewComponent } from './level-display/view-level.component';
 import { LogDisplayComponent } from './log-display/log-display.component';
+import { ExplanationComponent } from './explanation/explanation.component';
 
 
 import { GameOverDialogComponent } from './dialogs/game-over.component';
@@ -54,8 +55,12 @@ let routes = [{
         component: LoginComponent
     },
     {
-      path: 'new-game',
-      component: LevelViewComponent
+        path: 'new-game',
+        component: LevelViewComponent
+    },
+    {
+        path: 'explanation',
+        component: ExplanationComponent
     }
 ];
 
@@ -86,7 +91,8 @@ let routes = [{
         EditUserComponent,
         LevelViewComponent,
         GameOverDialogComponent,
-        LogDisplayComponent
+        LogDisplayComponent,
+        ExplanationComponent
     ],
   entryComponents: [
     GameOverDialogComponent,

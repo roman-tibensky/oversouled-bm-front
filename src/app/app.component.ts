@@ -8,7 +8,6 @@
   template: `
       <navi-ish-thing></navi-ish-thing>
       <router-outlet></router-outlet>
-      <log-display></log-display>
   `,
   styleUrls: ['./app.component.css'],
 })
