@@ -12,7 +12,7 @@ import { AuthService } from './authentication.service';
 @Injectable()
 export class WebService {
     // BASE_URL = 'http://localhost:8888/';
-	BASE_URL = 'https://oversouled-back.eu-gb.mybluemix.net/';
+	BASE_URL = 'https://rwscpwgxsj.execute-api.eu-west-1.amazonaws.com/default/';
 
 	private privateRelease = [];
 
@@ -66,8 +66,8 @@ export class WebService {
       const sendReq = {
         lvl: 1
       };
-      return this.http.post(this.BASE_URL + 'api/new-game', sendReq, this.auth.tokenHeader).map(
+      return this.http.post(this.BASE_URL + 'oversouled-level-generator', JSON.stringify(sendReq), null).map(
         res => res.json()
-      );
+      )//.subscribe()
     }
 }
